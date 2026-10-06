@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f7d8ed">
+<title>アイカツアンコール カード管理</title>
+<style>
+:root{--pink:#e9a9d0;--pink2:#fff0f8;--purple:#9c7acb;--text:#443746;--muted:#8a7b88;--line:#eadfea;--bg:#faf8fb;--card:#fff;--shadow:0 6px 22px rgba(102,70,105,.10)}
+*{box-sizing:border-box} body{margin:0;background:linear-gradient(#fffafd,#f8f5fb);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif}
+header{position:sticky;top:0;z-index:5;background:rgba(255,250,253,.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);padding:14px 16px}
+h1{font-size:19px;margin:0 0 10px;font-weight:800}.sparkle{color:#c78fc1}
+.container{max-width:1100px;margin:auto;padding:14px 14px 90px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}.stat{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:11px;text-align:center;box-shadow:var(--shadow)}.stat b{display:block;font-size:20px}.stat span{font-size:11px;color:var(--muted)}
+.toolbar{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:12px;box-shadow:var(--shadow);margin-bottom:14px}
+input,select,button{font:inherit} input[type=text],select{width:100%;height:42px;border:1px solid var(--line);border-radius:11px;background:#fff;padding:0 11px;color:var(--text);outline:none}input[type=text]:focus,select:focus{border-color:var(--pink)}
+.filters{display:grid;grid-template-columns:2fr repeat(4,1fr);gap:8px;margin-top:8px}.actions{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+button{border:0;border-radius:11px;padding:10px 13px;background:#f2e7f2;color:var(--text);font-weight:700;cursor:pointer}button.primary{background:linear-gradient(135deg,#e8a8cf,#b796dc);color:#fff}button.danger{background:#fff0f1;color:#bd5e69}button.small{padding:7px 9px;font-size:12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:12px}
+.card{background:#fff;border:1px solid var(--line);border-radius:17px;overflow:hidden;box-shadow:var(--shadow);position:relative}.thumb{aspect-ratio:3/4;background:linear-gradient(135deg,#f7edf8,#fdf9fc);display:flex;align-items:center;justify-content:center;overflow:hidden}.thumb img{width:100%;height:100%;object-fit:cover}.noimg{color:#b8aab7;font-size:12px}.info{padding:9px}.name{font-weight:800;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px}.tag{font-size:10px;background:#f5edf6;padding:3px 6px;border-radius:99px;color:#715c72}.owned{position:absolute;top:8px;right:8px;background:#fff;box-shadow:0 2px 8px #0002;border-radius:99px;padding:5px 7px;font-size:11px;font-weight:800}.empty{text-align:center;padding:55px 20px;color:var(--muted)}
+dialog{border:0;border-radius:20px;padding:0;width:min(92vw,560px);box-shadow:0 20px 70px #3d244233}dialog::backdrop{background:#2e193755}.modal{padding:18px}.modal h2{margin:0 0 14px;font-size:18px}.form{display:grid;grid-template-columns:1fr 1fr;gap:9px}.field.full{grid-column:1/-1}.field label{font-size:11px;color:var(--muted);display:block;margin:0 0 5px}.preview{width:120px;aspect-ratio:3/4;border-radius:12px;object-fit:cover;background:#f6eff7;display:block;margin:0 auto 12px}.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:15px}
+.file{display:none}.hint{font-size:11px;color:var(--muted);margin-top:8px;line-height:1.5}
+@media(max-width:700px){.filters{grid-template-columns:1fr 1fr}.filters input{grid-column:1/-1}.grid{grid-template-columns:repeat(2,1fr);gap:10px}.container{padding:10px 10px 80px}.stats{gap:6px}.stat{padding:9px 5px}.stat b{font-size:18px}.form{grid-template-columns:1fr}.field.full{grid-column:auto}}
+</style>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#e9a9d0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="アイカツカード">
+<link rel="apple-touch-icon" href="icon-192.png">
+<script>
+if ("serviceWorker" in navigator) window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js"));
+</script>
+</head>
+<body>
+<header><div class="container" style="padding:0"><h1>✦ アイカツアンコール <span class="sparkle">カード管理</span></h1></div></header>
+<main class="container">
+<section class="stats">
+ <div class="stat"><b id="total">0</b><span>登録カード</span></div>
+ <div class="stat"><b id="owned">0</b><span>所持カード</span></div>
+ <div class="stat"><b id="rate">0%</b><span>所持率</span></div>
+</section>
+<section class="toolbar">
+ <input id="search" type="text" placeholder="🔎 カード名・番号・ブランドなどで検索">
+ <div class="filters">
+  <select id="set"><option value="">すべての弾数</option></select>
+  <select id="promo"><option value="">プロモ：すべて</option><option>通常</option><option>プロモ</option></select>
+  <select id="type"><option value="">すべてのタイプ</option><option>キュート</option><option>クール</option><option>セクシー</option><option>ポップ</option><option>その他</option></select>
+  <select id="brand"><option value="">すべてのブランド</option></select>
+  <select id="rarity"><option value="">すべてのレア度</option><option>N</option><option>R</option><option>SR</option><option>PR</option><option>CP</option><option>SP</option><option>その他</option></select>
+ </div>
+ <div class="actions">
+  <button class="primary" onclick="openAdd()">＋ カードを登録</button>
+  <label><input class="file" type="file" accept="image/*" multiple onchange="importImages(this.files)">📷 写真から一括登録</label>
+  <button onclick="exportData()">バックアップ</button>
+  <label><input class="file" type="file" accept=".json" onchange="importData(this.files[0])">復元</label>
+ </div>
+ <div class="hint">データはこの端末のブラウザ内に保存されます。画像も端末内に保存するため、ブラウザのデータ削除や端末変更の前に「バックアップ」をおすすめします。</div>
+</section>
+<div id="grid" class="grid"></div>
+<div id="empty" class="empty" hidden>カードがありません。<br>「カードを登録」または「写真から一括登録」から追加してね。</div>
+</main>
+
+<dialog id="dlg"><div class="modal">
+<h2 id="dlgTitle">カードを登録</h2>
+<img id="preview" class="preview" hidden>
+<div class="form">
+ <div class="field full"><label>カード名</label><input id="fName" type="text" placeholder="例：星宮いちご ステージコーデ"></div>
+ <div class="field"><label>カード番号</label><input id="fNo" type="text" placeholder="例：01-01"></div>
+ <div class="field"><label>弾数</label><input id="fSet" type="text" placeholder="例：第1弾"></div>
+ <div class="field"><label>プロモ</label><select id="fPromo"><option>通常</option><option>プロモ</option></select></div>
+ <div class="field"><label>タイプ</label><select id="fType"><option></option><option>キュート</option><option>クール</option><option>セクシー</option><option>ポップ</option><option>その他</option></select></div>
+ <div class="field"><label>ブランド</label><input id="fBrand" type="text" placeholder="例：Angely Sugar"></div>
+ <div class="field"><label>レア度</label><select id="fRarity"><option></option><option>N</option><option>R</option><option>SR</option><option>PR</option><option>CP</option><option>SP</option><option>その他</option></select></div>
+ <div class="field"><label>所持</label><select id="fOwned"><option value="1">所持</option><option value="0">未所持</option></select></div>
+ <div class="field full"><label>メモ</label><input id="fMemo" type="text" placeholder="状態・ダブり・入手先など"></div>
+</div>
+<div class="modal-actions"><button onclick="dlg.close()">キャンセル</button><button class="primary" onclick="saveCard()">保存</button></div>
+</div></dialog>
+
+<script>
+const KEY='aikatsuEncoreCards_v1';
+let cards=JSON.parse(localStorage.getItem(KEY)||'[]');
+let editId=null, pendingImage=null;
+
+const $=id=>document.getElementById(id);
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2)}
+function save(){localStorage.setItem(KEY,JSON.stringify(cards)); render();}
+
+function render(){
+ updateFilters();
+ const q=$('search').value.trim().toLowerCase();
+ const vals={set:$('set').value,promo:$('promo').value,type:$('type').value,brand:$('brand').value,rarity:$('rarity').value};
+ const list=cards.filter(c=>{
+  const text=[c.name,c.no,c.set,c.promo,c.type,c.brand,c.rarity,c.memo].join(' ').toLowerCase();
+  return (!q||text.includes(q))&&(!vals.set||c.set===vals.set)&&(!vals.promo||c.promo===vals.promo)&&(!vals.type||c.type===vals.type)&&(!vals.brand||c.brand===vals.brand)&&(!vals.rarity||c.rarity===vals.rarity);
+ });
+ $('total').textContent=cards.length;$('owned').textContent=cards.filter(c=>c.owned).length;$('rate').textContent=cards.length?Math.round(cards.filter(c=>c.owned).length/cards.length*100)+'%':'0%';
+ $('grid').innerHTML=list.map(c=>`<article class="card">
+ <div class="owned">${c.owned?'✓ 所持':'未所持'}</div>
+ <div class="thumb">${c.image?`<img src="${c.image}" alt="">`:'<span class="noimg">画像なし</span>'}</div>
+ <div class="info"><div class="name">${esc(c.name||'名称未登録')}</div><div class="tags">${[c.set,c.promo==='プロモ'?'プロモ':null,c.type,c.brand,c.rarity,c.no].filter(Boolean).map(x=>`<span class="tag">${esc(x)}</span>`).join('')}</div>
+ <div style="display:flex;gap:5px;margin-top:8px"><button class="small" onclick="editCard('${c.id}')">編集</button><button class="small danger" onclick="removeCard('${c.id}')">削除</button></div></div></article>`).join('');
+ $('empty').hidden=list.length!==0;
+}
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function updateFilters(){
+ const current={set:$('set').value,brand:$('brand').value};
+ const sets=[...new Set(cards.map(c=>c.set).filter(Boolean))].sort();
+ const brands=[...new Set(cards.map(c=>c.brand).filter(Boolean))].sort();
+ $('set').innerHTML='<option value="">すべての弾数</option>'+sets.map(x=>`<option ${x===current.set?'selected':''}>${esc(x)}</option>`).join('');
+ $('brand').innerHTML='<option value="">すべてのブランド</option>'+brands.map(x=>`<option ${x===current.brand?'selected':''}>${esc(x)}</option>`).join('');
+}
+['search','set','promo','type','brand','rarity'].forEach(id=>$(id).addEventListener('input',render));
+
+function resetForm(){
+ ['fName','fNo','fSet','fBrand','fMemo'].forEach(x=>$(x).value='');
+ ['fPromo','fType','fRarity'].forEach(x=>$(x).selectedIndex=0);
+ $('fOwned').value='1'; $('preview').hidden=true; pendingImage=null;
+}
+function openAdd(){
+ editId=null;resetForm();$('dlgTitle').textContent='カードを登録';$('dlg').showModal();
+}
+function editCard(id){
+ const c=cards.find(x=>x.id===id);if(!c)return;editId=id;
+ $('dlgTitle').textContent='カードを編集';$('fName').value=c.name||'';$('fNo').value=c.no||'';$('fSet').value=c.set||'';
+ $('fPromo').value=c.promo||'通常';$('fType').value=c.type||'';$('fBrand').value=c.brand||'';$('fRarity').value=c.rarity||'';$('fOwned').value=c.owned?'1':'0';$('fMemo').value=c.memo||'';
+ pendingImage=c.image||null;if(pendingImage){$('preview').src=pendingImage;$('preview').hidden=false}
+ $('dlg').showModal();
+}
+function saveCard(){
+ const old=editId&&cards.find(x=>x.id===editId);
+ const c={id:editId||uid(),name:$('fName').value.trim(),no:$('fNo').value.trim(),set:$('fSet').value.trim(),promo:$('fPromo').value,type:$('fType').value,brand:$('fBrand').value.trim(),rarity:$('fRarity').value,owned:$('fOwned').value==='1',memo:$('fMemo').value.trim(),image:pendingImage};
+ if(old)Object.assign(old,c);else cards.unshift(c);save();$('dlg').close();
+}
+function removeCard(id){if(confirm('このカードを削除する？')){cards=cards.filter(c=>c.id!==id);save()}}
+function importImages(files){
+ [...files].forEach(file=>{
+  const r=new FileReader();r.onload=()=>{cards.unshift({id:uid(),name:file.name.replace(/\.[^.]+$/,''),no:'',set:'',promo:'通常',type:'',brand:'',rarity:'',owned:true,memo:'',image:r.result});save()};r.readAsDataURL(file);
+ });
+}
+function exportData(){
+ const blob=new Blob([JSON.stringify(cards)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='aikatsu-encore-backup.json';a.click();URL.revokeObjectURL(a.href);
+}
+function importData(file){
+ if(!file)return;const r=new FileReader();r.onload=()=>{try{const data=JSON.parse(r.result);if(!Array.isArray(data))throw 0;cards=data;save();alert('復元しました！')}catch(e){alert('バックアップファイルを読み込めませんでした')}};r.readAsText(file);
+}
+render();
+</script>
+</body>
+</html>
