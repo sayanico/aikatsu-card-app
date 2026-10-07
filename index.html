@@ -5,22 +5,17 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f7d8ed">
 <title>アイカツアンコール カード管理</title>
-<style>
-:root{--pink:#e9a9d0;--pink2:#fff0f8;--purple:#9c7acb;--text:#443746;--muted:#8a7b88;--line:#eadfea;--bg:#faf8fb;--card:#fff;--shadow:0 6px 22px rgba(102,70,105,.10)}
-*{box-sizing:border-box} body{margin:0;background:linear-gradient(#fffafd,#f8f5fb);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif}
-header{position:sticky;top:0;z-index:5;background:rgba(255,250,253,.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);padding:14px 16px}
-h1{font-size:19px;margin:0 0 10px;font-weight:800}.sparkle{color:#c78fc1}
-.container{max-width:1100px;margin:auto;padding:14px 14px 90px}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}.stat{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:11px;text-align:center;box-shadow:var(--shadow)}.stat b{display:block;font-size:20px}.stat span{font-size:11px;color:var(--muted)}
-.toolbar{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:12px;box-shadow:var(--shadow);margin-bottom:14px}
-input,select,button{font:inherit} input[type=text],select{width:100%;height:42px;border:1px solid var(--line);border-radius:11px;background:#fff;padding:0 11px;color:var(--text);outline:none}input[type=text]:focus,select:focus{border-color:var(--pink)}
-.filters{display:grid;grid-template-columns:2fr repeat(4,1fr);gap:8px;margin-top:8px}.actions{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+<style>:root{--pink:#e9a9d0;--purple:#9c7acb;--text:#443746;--muted:#8a7b88;--line:#eadfea;--card:#fff;--shadow:0 7px 24px rgba(102,70,105,.11)}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 15% 0%,#fff,#fffafd 40%,#f7f3fb);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif}
+header{position:sticky;top:0;z-index:5;background:rgba(255,250,253,.95);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);padding:13px 16px}h1{font-size:19px;margin:0;font-weight:900}.sparkle{color:#c78fc1}
+.container{max-width:1100px;margin:auto;padding:14px 14px 90px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}.stat{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:11px;text-align:center;box-shadow:var(--shadow)}.stat b{display:block;font-size:20px}.stat span{font-size:11px;color:var(--muted)}
+.toolbar,.section{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:12px;box-shadow:var(--shadow);margin-bottom:12px}.section-title{font-weight:900;margin-bottom:8px;font-size:14px}
+input,select,button{font:inherit}input[type=text],select{width:100%;height:42px;border:1px solid var(--line);border-radius:11px;background:#fff;padding:0 11px;color:var(--text);outline:none}.filters{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:8px}.actions{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
 button{border:0;border-radius:11px;padding:10px 13px;background:#f2e7f2;color:var(--text);font-weight:700;cursor:pointer}button.primary{background:linear-gradient(135deg,#e8a8cf,#b796dc);color:#fff}button.danger{background:#fff0f1;color:#bd5e69}button.small{padding:7px 9px;font-size:12px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:12px}
-.card{background:#fff;border:1px solid var(--line);border-radius:17px;overflow:hidden;box-shadow:var(--shadow);position:relative}.thumb{aspect-ratio:3/4;background:linear-gradient(135deg,#f7edf8,#fdf9fc);display:flex;align-items:center;justify-content:center;overflow:hidden}.thumb img{width:100%;height:100%;object-fit:cover}.noimg{color:#b8aab7;font-size:12px}.info{padding:9px}.name{font-weight:800;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px}.tag{font-size:10px;background:#f5edf6;padding:3px 6px;border-radius:99px;color:#715c72}.owned{position:absolute;top:8px;right:8px;background:#fff;box-shadow:0 2px 8px #0002;border-radius:99px;padding:5px 7px;font-size:11px;font-weight:800}.empty{text-align:center;padding:55px 20px;color:var(--muted)}
-dialog{border:0;border-radius:20px;padding:0;width:min(92vw,560px);box-shadow:0 20px 70px #3d244233}dialog::backdrop{background:#2e193755}.modal{padding:18px}.modal h2{margin:0 0 14px;font-size:18px}.form{display:grid;grid-template-columns:1fr 1fr;gap:9px}.field.full{grid-column:1/-1}.field label{font-size:11px;color:var(--muted);display:block;margin:0 0 5px}.preview{width:120px;aspect-ratio:3/4;border-radius:12px;object-fit:cover;background:#f6eff7;display:block;margin:0 auto 12px}.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:15px}
-.file{display:none}.hint{font-size:11px;color:var(--muted);margin-top:8px;line-height:1.5}
-@media(max-width:700px){.filters{grid-template-columns:1fr 1fr}.filters input{grid-column:1/-1}.grid{grid-template-columns:repeat(2,1fr);gap:10px}.container{padding:10px 10px 80px}.stats{gap:6px}.stat{padding:9px 5px}.stat b{font-size:18px}.form{grid-template-columns:1fr}.field.full{grid-column:auto}}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:13px}.card{background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:var(--shadow);position:relative}.card.unowned{opacity:.78}.thumb{aspect-ratio:3/4;background:linear-gradient(135deg,#f7edf8,#fdf9fc);display:flex;align-items:center;justify-content:center;overflow:hidden}.thumb img{width:100%;height:100%;object-fit:cover}.noimg{color:#b8aab7;font-size:12px}.info{padding:10px}.name{font-weight:900;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px}.tag{font-size:10px;background:#f5edf6;padding:3px 6px;border-radius:99px;color:#715c72}.owned{position:absolute;top:9px;right:9px;z-index:2;box-shadow:0 2px 9px #0002;border-radius:99px;padding:6px 8px;font-size:11px;font-weight:900}.owned.yes{background:#fff;color:#bd5798}.owned.no{background:#f7f3f7;color:#8f8490;border:1px solid #ddd3df}
+.progress-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px}.progress-item{border:1px solid var(--line);border-radius:13px;padding:9px;background:linear-gradient(135deg,#fff,#fff7fc)}.progress-head{display:flex;justify-content:space-between;font-size:12px;font-weight:800}.bar{height:7px;background:#f0eaf2;border-radius:99px;overflow:hidden;margin-top:7px}.bar i{display:block;height:100%;background:linear-gradient(90deg,#e9a9d0,#a88bd1);border-radius:99px}
+.empty{text-align:center;padding:55px 20px;color:var(--muted)}dialog{border:0;border-radius:20px;padding:0;width:min(92vw,560px);box-shadow:0 20px 70px #3d244233}dialog::backdrop{background:#2e193755}.modal{padding:18px}.modal h2{margin:0 0 14px;font-size:18px}.form{display:grid;grid-template-columns:1fr 1fr;gap:9px}.field.full{grid-column:1/-1}.field label{font-size:11px;color:var(--muted);display:block;margin:0 0 5px}.preview{width:140px;aspect-ratio:3/4;border-radius:13px;object-fit:cover;background:#f6eff7;display:block;margin:0 auto 12px}.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:15px}.file{display:none}.hint{font-size:11px;color:var(--muted);margin-top:8px;line-height:1.5}
+@media(max-width:700px){.filters{grid-template-columns:1fr 1fr}.grid{grid-template-columns:repeat(2,1fr);gap:10px}.container{padding:10px 10px 80px}.stats{gap:6px}.stat{padding:9px 5px}.stat b{font-size:18px}.form{grid-template-columns:1fr}.field.full{grid-column:auto}.progress-list{grid-template-columns:1fr}}
 </style>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#e9a9d0">
@@ -48,6 +43,7 @@ if ("serviceWorker" in navigator) window.addEventListener("load",()=>navigator.s
   <select id="type"><option value="">すべてのタイプ</option><option>キュート</option><option>クール</option><option>セクシー</option><option>ポップ</option><option>その他</option></select>
   <select id="brand"><option value="">すべてのブランド</option></select>
   <select id="rarity"><option value="">すべてのレア度</option><option>N</option><option>R</option><option>SR</option><option>PR</option><option>CP</option><option>SP</option><option>その他</option></select>
+  <select id="ownedFilter"><option value="">所持：すべて</option><option value="1">❤️ 所持</option><option value="0">🤍 未所持</option></select>
  </div>
  <div class="actions">
   <button class="primary" onclick="openAdd()">＋ カードを登録</button>
@@ -57,6 +53,7 @@ if ("serviceWorker" in navigator) window.addEventListener("load",()=>navigator.s
  </div>
  <div class="hint">データはこの端末のブラウザ内に保存されます。画像も端末内に保存するため、ブラウザのデータ削除や端末変更の前に「バックアップ」をおすすめします。</div>
 </section>
+<section class="section"><div class="section-title">📊 コレクション進捗</div><div id="progressList" class="progress-list"></div></section>
 <div id="grid" class="grid"></div>
 <div id="empty" class="empty" hidden>カードがありません。<br>「カードを登録」または「写真から一括登録」から追加してね。</div>
 </main>
@@ -90,18 +87,26 @@ function save(){localStorage.setItem(KEY,JSON.stringify(cards)); render();}
 function render(){
  updateFilters();
  const q=$('search').value.trim().toLowerCase();
- const vals={set:$('set').value,promo:$('promo').value,type:$('type').value,brand:$('brand').value,rarity:$('rarity').value};
+ const vals={set:$('set').value,promo:$('promo').value,type:$('type').value,brand:$('brand').value,rarity:$('rarity').value,owned:$('ownedFilter').value};
  const list=cards.filter(c=>{
   const text=[c.name,c.no,c.set,c.promo,c.type,c.brand,c.rarity,c.memo].join(' ').toLowerCase();
-  return (!q||text.includes(q))&&(!vals.set||c.set===vals.set)&&(!vals.promo||c.promo===vals.promo)&&(!vals.type||c.type===vals.type)&&(!vals.brand||c.brand===vals.brand)&&(!vals.rarity||c.rarity===vals.rarity);
+  return (!q||text.includes(q))&&(!vals.set||c.set===vals.set)&&(!vals.promo||c.promo===vals.promo)&&(!vals.type||c.type===vals.type)&&(!vals.brand||c.brand===vals.brand)&&(!vals.rarity||c.rarity===vals.rarity)&&(!vals.owned||String(c.owned?1:0)===vals.owned);
  });
  $('total').textContent=cards.length;$('owned').textContent=cards.filter(c=>c.owned).length;$('rate').textContent=cards.length?Math.round(cards.filter(c=>c.owned).length/cards.length*100)+'%':'0%';
- $('grid').innerHTML=list.map(c=>`<article class="card">
- <div class="owned">${c.owned?'✓ 所持':'未所持'}</div>
+ $('grid').innerHTML=list.map(c=>`<article class="card ${c.owned?'':'unowned'}">
+ <div class="owned ${c.owned?'yes':'no'}">${c.owned?'❤️ 所持':'🤍 未所持'}</div>
  <div class="thumb">${c.image?`<img src="${c.image}" alt="">`:'<span class="noimg">画像なし</span>'}</div>
  <div class="info"><div class="name">${esc(c.name||'名称未登録')}</div><div class="tags">${[c.set,c.promo==='プロモ'?'プロモ':null,c.type,c.brand,c.rarity,c.no].filter(Boolean).map(x=>`<span class="tag">${esc(x)}</span>`).join('')}</div>
  <div style="display:flex;gap:5px;margin-top:8px"><button class="small" onclick="editCard('${c.id}')">編集</button><button class="small danger" onclick="removeCard('${c.id}')">削除</button></div></div></article>`).join('');
  $('empty').hidden=list.length!==0;
+ renderProgress();
+}
+function renderProgress(){
+ const root=$('progressList'), groups=[...new Set(cards.map(c=>c.set).filter(Boolean))].sort();
+ if(!groups.length){root.innerHTML='<div style="color:var(--muted);font-size:12px">カードを登録すると、弾ごとのコンプ率がここに表示されます。</div>';return;}
+ root.innerHTML=groups.map(s=>{const a=cards.filter(c=>c.set===s),o=a.filter(c=>c.owned).length,p=Math.round(o/a.length*100);return `<div class="progress-item"><div class="progress-head"><span>${esc(s)}</span><span>${o}/${a.length}枚　${p}%</span></div><div class="bar"><i style="width:${p}%"></i></div></div>`}).join('');
+ const rs=[...new Set(cards.map(c=>c.rarity).filter(Boolean))];
+ if(rs.length)root.innerHTML+=`<div style="grid-column:1/-1"><div class="section-title">⭐ レア度別（登録枚数）</div><div class="tags">${rs.map(r=>`<span class="tag">${esc(r)}：${cards.filter(c=>c.rarity===r).length}枚</span>`).join('')}</div></div>`;
 }
 function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
 function updateFilters(){
@@ -111,7 +116,7 @@ function updateFilters(){
  $('set').innerHTML='<option value="">すべての弾数</option>'+sets.map(x=>`<option ${x===current.set?'selected':''}>${esc(x)}</option>`).join('');
  $('brand').innerHTML='<option value="">すべてのブランド</option>'+brands.map(x=>`<option ${x===current.brand?'selected':''}>${esc(x)}</option>`).join('');
 }
-['search','set','promo','type','brand','rarity'].forEach(id=>$(id).addEventListener('input',render));
+['search','set','promo','type','brand','rarity','ownedFilter'].forEach(id=>$(id).addEventListener('input',render));
 
 function resetForm(){
  ['fName','fNo','fSet','fBrand','fMemo'].forEach(x=>$(x).value='');
@@ -136,7 +141,7 @@ function saveCard(){
 function removeCard(id){if(confirm('このカードを削除する？')){cards=cards.filter(c=>c.id!==id);save()}}
 function importImages(files){
  [...files].forEach(file=>{
-  const r=new FileReader();r.onload=()=>{cards.unshift({id:uid(),name:file.name.replace(/\.[^.]+$/,''),no:'',set:'',promo:'通常',type:'',brand:'',rarity:'',owned:true,memo:'',image:r.result});save()};r.readAsDataURL(file);
+  const r=new FileReader();r.onload=()=>{cards.unshift({id:uid(),name:file.name.replace(/\.[^.]+$/,''),no:'',set:'',promo:'通常',type:'',brand:'',rarity:'',owned:false,memo:'',image:r.result});save()};r.readAsDataURL(file);
  });
 }
 function exportData(){
